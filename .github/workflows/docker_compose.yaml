@@ -1,0 +1,25 @@
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Create output directory
+        run: mkdir -p output
+
+      - name: Build Docker image
+        run: docker build -t broken_link_finder .
+
+      - name: Run Docker container with volume mount
+        run: docker run -v "${{ github.workspace }}/output:/app" broken_link_finder
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: broken-report
+          path: output/
+
+      - name: Clean up output directory
+        run: rm -rf output
