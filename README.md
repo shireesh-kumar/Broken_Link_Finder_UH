@@ -17,7 +17,7 @@ Note: GitHub Actions Workflow doesnot get triggered when we push readme file cha
 
 ## Planned To Do
 
-1. Write basic Python code to find broken links — **[Done]**
+1. Write a dockerized Python code to find broken links in UH Grad School Website — **[Done]**
 2. Experiment with Python threads to improve performance.
 3. Experiment with Go and Goroutines to compare performance with Python.
 
