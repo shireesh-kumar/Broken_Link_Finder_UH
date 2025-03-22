@@ -38,7 +38,7 @@ def crawl(session_req):
     now = datetime.now()
     formatted_date_time = now.strftime("%Y-%m-%d %H:%M:%S")
 
-    with open(f'broken_report_{formatted_date_time}.json', 'w') as json_file:
+    with open(f'output/broken_report_{formatted_date_time}.json', 'w') as json_file:
         json.dump(broken_report, json_file, indent=4)
             
 

@@ -20,7 +20,7 @@ jobs:
         run: docker build -t broken_link_finder .
 
       - name: Run Docker container with volume mount
-        run: docker run -v "${{ github.workspace }}/output:/app" broken_link_finder
+        run: docker run -v "${{ github.workspace }}/output:/app/output" broken_link_finder
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
