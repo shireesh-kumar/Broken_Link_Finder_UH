@@ -6,5 +6,5 @@ COPY . /app
 
 RUN pip install -r requirements.txt
 
-CMD ["python", "./broken_link_finder.py"]
+CMD ["python", "broken_link_finder.py"]
 
