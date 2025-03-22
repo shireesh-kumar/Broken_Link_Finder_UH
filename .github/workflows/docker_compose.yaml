@@ -22,20 +22,11 @@ jobs:
       - name: Run Docker container with volume mount
         run: docker run -v "${{ github.workspace }}/output:/app/output" broken_link_finder
 
-      # Flatten the output structure by copying files to a temporary folder
-      - name: Flatten output structure
-        run: |
-          mkdir -p flat
-          cp output/* flat/
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           name: broken-report
-          path: flat/
+          path: output/
 
-      # Clean up: remove the temporary flat folder and empty the output directory
-      - name: Clean up temporary directories
-        run: |
-          rm -rf flat
-          rm -rf output/*
+      - name: Clean up output directory
+        run: rm -rf output
