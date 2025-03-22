@@ -23,7 +23,7 @@ jobs:
         run: docker run -v "${{ github.workspace }}/output:/app" broken_link_finder
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-pages-artifact@v3
         with:
           name: broken-report
           path: output/
