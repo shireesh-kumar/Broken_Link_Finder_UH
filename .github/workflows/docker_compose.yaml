@@ -29,7 +29,7 @@ jobs:
           cp output/* flat/
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-pages-artifact@v3
         with:
           name: broken-report
           path: flat/
