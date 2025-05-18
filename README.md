@@ -13,7 +13,6 @@ A simple Python application that crawls my Graduate School website to identify b
 - **Identify Broken Links:**  
   On each page, the application extracts all links and checks them for validity. Broken links are recorded in the JSON report and save as artifact via Github Actions.
 
-Note: GitHub Actions Workflow doesnot get triggered when we push readme file changes
 
 
 
