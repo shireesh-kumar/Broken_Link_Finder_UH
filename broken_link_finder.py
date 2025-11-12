@@ -4,11 +4,31 @@ from bs4 import BeautifulSoup
 import urllib3
 import json
 from datetime import datetime
+from tqdm import tqdm
+import sys
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+
+def check_link(url,driver):
+    try:
+        driver.get(url)
+        return True
+    except Exception as e:
+        return False
 
 def crawl(session_req):
     broken_report = {}
-    with open('UH_Links.csv', mode='r') as file:
+    options = Options()
+    options.add_argument("--headless")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+
+    driver = webdriver.Chrome(options=options)
+
+    with open('UH_Test_Links.csv', mode='r') as file:
         csvFile = csv.reader(file)
+        headers = {"User-Agent": "PostmanRuntime/7.50.0"}
+
         for eachline in csvFile:
             try:
                 broken_links = []
@@ -19,28 +39,37 @@ def crawl(session_req):
 
                 html_data = BeautifulSoup(response.text, 'html.parser')
                 
-                for section in html_data.select('.uh-footer.uh-footer-brick, .uh-header.uh-header-secondary'):
-                    section.decompose()
+                body = html_data.find('body')
+                if body:
+                    main = body.find('main')
+                    if main:
+                        html_data = main
+                    else:
+                        raise Exception("Main tag not found in body")
+                
                 
                 full_list_links = html_data.find_all('a')
-                for i in full_list_links:
-                    link = str(i.attrs.get('href'))
-                    if not link.startswith("http"):
-                        continue
-                    res = requests.get(url=link,verify=False)
-                    if res.status_code != 200:
-                        broken_links.append({i.text:link})
-            
+                
+                with tqdm(total=len(full_list_links), desc="Processing", disable=not sys.stdout.isatty()) as pbar: 
+                    for i in full_list_links:
+                        link = str(i.attrs.get('href'))
+                        if link.startswith("http"):
+                            res = requests.get(headers = headers,url=link,verify=False, timeout=(5, 15), allow_redirects=True)
+                            if res.status_code >= 400:
+                                if not check_link(link,driver):
+                                    broken_links.append({i.text:link, "status_code": res.status_code})
+                        pbar.update(1)  
                 broken_report[eachline[0]] = broken_links
-            except requests.exceptions.RequestException as ex:
-                print(ex)
-        
+            except Exception as ex:
+                print(f"Error: {type(ex).__name__} - {ex}")
+  
     now = datetime.now()
-    formatted_date_time = now.strftime("%Y-%m-%d %H:%M:%S")
+    formatted_date_time = now.strftime("%Y-%m-%d-%H-%M-%S")
 
     with open(f'output/broken_report_{formatted_date_time}.json', 'w') as json_file:
         json.dump(broken_report, json_file, indent=4)
-            
+    
+    driver.quit()        
 
 if __name__ == "__main__":
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
