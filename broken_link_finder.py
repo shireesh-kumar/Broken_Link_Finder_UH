@@ -17,8 +17,7 @@ def test_links_with_playwright(links_to_test, broken_links, page):
                 broken_links.append({link_data['text']: link_data['url'], "status_code": response.status})
         except Exception:
             broken_links.append({link_data['text']: link_data['url'], "status_code": "playwright_error"})
-
-
+            
 def crawl(session_req):
     broken_report = {}
     
